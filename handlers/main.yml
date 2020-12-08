@@ -1,0 +1,8 @@
+---
+- name: reload bareos server
+  shell: echo "reload" | bconsole
+
+- name: restart apache
+  service:
+    name: apache2
+    state: restarted

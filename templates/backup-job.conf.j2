@@ -1,0 +1,5 @@
+Job {
+  Name = "backup-{{ item.name }}"
+  JobDefs = "DefaultJobLinux"
+  Client = "{{ item.name }}"
+}

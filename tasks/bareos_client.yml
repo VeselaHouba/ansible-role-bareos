@@ -1,0 +1,47 @@
+---
+- name: Make sure bareos-client is installed
+  apt:
+    name: bareos-client
+
+- name: Create config dir on client
+  file:
+    path: /etc/bareos/bareos-fd.d/director
+    state: directory
+    owner: root
+    group: bareos
+
+- name: Make sure director's IP is defined on host
+  lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ bareos_director.ip }}"
+    line: "{{ bareos_director.ip }} {{ bareos_director.name }}"
+  when:
+    - bareos_director.ip is defined
+    - bareos_director.name is defined
+
+# This block is not idempotent and should be used only as one-time update
+- block:
+    - name: Stop before upgrade
+      service:
+        name: bareos-fd
+        state: stopped
+
+    - name: Update apt cache
+      apt:
+        update_cache: true
+      ignore_errors: true
+
+    - name: Upgrade to specific version
+      apt:
+        name:
+          - "bareos-bconsole={{ bareos_version }}"
+          - "bareos-client={{ bareos_version }}"
+          - "bareos-common={{ bareos_version }}"
+          - "bareos-filedaemon={{ bareos_version }}"
+        allow_unauthenticated: true
+
+    - name: Start after upgrade
+      service:
+        name: bareos-fd
+        state: started
+  when: bareos_version is defined

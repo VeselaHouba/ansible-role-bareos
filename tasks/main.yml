@@ -1,0 +1,33 @@
+---
+- name: Generate Debian version
+  set_fact:
+    _bareos_os_version: "Debian_{{ ansible_distribution_major_version }}{{ '.0' if ansible_distribution_major_version is version('10','<') else '' }}"
+  when: ansible_distribution == "Debian"
+
+- name: Generate Ubuntu version
+  set_fact:
+    _bareos_os_version: "xUbuntu_{{ ansible_distribution_major_version }}.04"
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add BareOS apt-key
+  apt_key:
+    url: "http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version|default(_bareos_os_version) }}/Release.key"
+
+- name: Ensure BareOS APT repo is present
+  apt_repository:
+    repo: "deb http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version|default(_bareos_os_version) }}/ /"
+
+- name: Install && setup bareos client
+  include_tasks: bareos_client.yml
+  when: bareos_install_client
+
+- name: Install bareos-server
+  include_tasks: bareos_server.yml
+  when: bareos_install_server
+
+- name: Register clients
+  include_tasks: register_client.yml
+  with_items: "{{ bareos_clients }}"
+  when:
+    - bareos_install_server
+    - item.ansible_delegate_hostname|default(item.name) in ansible_play_hosts

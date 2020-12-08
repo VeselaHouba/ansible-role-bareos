@@ -1,0 +1,8 @@
+
+SCENARIO:
+  stage: molecule
+  script:
+    - ansible --version
+    - molecule test --scenario-name=SCENARIO
+  tags:
+    - molecule

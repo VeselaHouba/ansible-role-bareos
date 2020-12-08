@@ -1,0 +1,93 @@
+---
+- name: Ensure bareos server is installed
+  apt:
+    name:
+      - bareos
+      - bareos-webui
+  notify: restart apache
+
+- name: Ensure bareos postgresql is installed
+  apt:
+    name: bareos-database-postgresql
+
+# TODO: All stuff after this line should go to separate role!
+- name: Ensure postgresql is installed
+  apt:
+    name: "{{ bareos_db_package }}"
+
+- name: Make sure postgresql is running
+  systemd:
+    name: postgresql
+    state: started
+
+- name: Install packages for monitoring
+  apt:
+    name:
+      - python-psycopg2
+      - python-mysqldb
+      - python3-psycopg2
+      - python3-mysqldb
+
+- block:
+    - name: Check that bareos DB exists
+      shell: psql -lqt | cut -d \| -f 1 | grep -qw bareos
+      become: true
+      become_user: postgres
+      register: _bareos_db_exists
+      failed_when: false
+      changed_when: false
+
+    - name: Run DB setup scripts
+      become: true
+      become_user: postgres
+      shell: >
+        /usr/lib/bareos/scripts/create_bareos_database &&
+        /usr/lib/bareos/scripts/make_bareos_tables &&
+        /usr/lib/bareos/scripts/grant_bareos_privileges
+      when: _bareos_db_exists.rc != 0
+
+    - name: Create Postgres Monitoring User
+      become: true
+      become_user: postgres
+      postgresql_user:
+        name: sensu
+        password: "{{ bareos_sensu_postgres_pass }}"
+
+    - name: Ensure we have access from the monitoring user
+      become: true
+      become_user: postgres
+      postgresql_privs:
+        db: bareos
+        role: sensu
+        objs: ALL_IN_SCHEMA
+        privs: SELECT
+  when: bareos_setup_db
+
+- name: Upload bareos config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  notify: reload bareos server
+  with_items:
+    - src: fileset/LinuxAll.conf.j2
+      dest: /etc/bareos/bareos-dir.d/fileset/LinuxAll.conf
+    - src: jobdefs/DefaultJobLinux.conf.j2
+      dest: /etc/bareos/bareos-dir.d/jobdefs/DefaultJobLinux.conf
+
+- name: Make sure daemons are started
+  systemd:
+    name: "{{ item }}"
+    state: started
+  with_items:
+    - bareos-dir
+    - bareos-sd
+    - bareos-fd
+
+- name: Upload useful scripts
+  copy:
+    src: opt/bareos_utils/
+    dest: /opt/bareos_utils/
+    mode: 0700
+    directory_mode: 0700
+    owner: root
+    group: root

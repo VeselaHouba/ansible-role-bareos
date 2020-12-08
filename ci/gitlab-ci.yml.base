@@ -1,0 +1,11 @@
+---
+stages:
+  - molecule
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+
+image: veselahouba/molecule
+
+services:
+  - docker:dind
