@@ -1,9 +1,9 @@
 ---
-dependencies: []
 galaxy_info:
   author: Jan Michalek
-  license: license (BSD, MIT)
+  role_name: bareos
   description: Role for managing bareos server & clients
+  license: MIT
   min_ansible_version: 2.8
   platforms:
     - name: Debian
@@ -12,5 +12,10 @@ galaxy_info:
         - buster
     - name: Ubuntu
       versions:
-        - 16.04
-        - 18.04
+        - xenial
+        - bionic
+  galaxy_tags:
+    - system
+    - debian
+    - ubuntu
+dependencies: []

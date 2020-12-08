@@ -1,0 +1,6 @@
+---
+bareos_os_version: Debian_10
+bareos_db_package: postgresql-11
+_bareos_support_packages:
+  - gpg
+  - gpgv2

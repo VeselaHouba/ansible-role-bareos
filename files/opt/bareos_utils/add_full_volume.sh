@@ -2,11 +2,11 @@
 DBVOLUMES=$(runuser -u postgres -- psql bareos -t -c "select count(*) from media where volumename like 'Full-%';"|awk '{print $1}')
 LASTVOLUME=$(runuser -u postgres -- psql bareos -t -c "select volumename from media where volumename like 'Full-%' order by volumename desc limit 1;"|awk '{print $1}'|sed 's/Full-//g')
 echo "Original number of volumes: ${DBVOLUMES}, last volume: Full-${LASTVOLUME}"
-let "DBVOLUMES+=1"
-let "NEWVOLUME=LASTVOLUME+1"
+(( DBVOLUMES+=1 ))
+(( NEWVOLUME=LASTVOLUME+1 ))
 echo "New number of volumes: ${DBVOLUMES}, new volume: Full-${NEWVOLUME}"
 echo "continue? [y/n]"
-read cont
+read -r cont
 if [ "${cont}" != "y" ]; then
   echo "Cancelling"
   exit 1

@@ -1,0 +1,6 @@
+---
+bareos_os_version: xUbuntu_18.04
+bareos_db_package: postgresql-10
+_bareos_support_packages:
+  - gpgv2
+  - gpg-agent

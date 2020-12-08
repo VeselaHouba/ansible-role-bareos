@@ -1,0 +1,19 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Install dependencies
+      apt:
+        update_cache: true
+        name:
+          - iputils-ping
+          - iproute2
+
+    - name: Gather facts again - with IPs
+      setup:
+
+    # ugly but working - docker won't let us overrwrite file with lineinfile
+    - name: Add hosts to /etc/hosts
+      shell: echo "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}" >> /etc/hosts
+      with_items: "{{ groups['all'] }}"
+      changed_when: false

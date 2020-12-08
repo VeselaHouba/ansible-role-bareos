@@ -1,6 +1,6 @@
 ---
 bareos_release: latest
-bareos_db_package: postgresql-9.6
+bareos_db_package: postgresql-11
 bareos_install_client: false
 bareos_install_server: false
 # Can be dangerous, use with care
@@ -16,8 +16,6 @@ bareos_director: {}
 
 # uncomment for upgrading to specific version
 # bareos_version: "18.2.5-*"
-# uncomment to force version from repo
-# bareos_os_version: Debian_9.0
 bareos_excludes:
   - /var/lib/bareos
   - /var/lib/bareos/storage

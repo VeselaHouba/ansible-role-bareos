@@ -10,7 +10,6 @@
   apt:
     name: bareos-database-postgresql
 
-# TODO: All stuff after this line should go to separate role!
 - name: Ensure postgresql is installed
   apt:
     name: "{{ bareos_db_package }}"
@@ -67,6 +66,7 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    mode: 0644
   notify: reload bareos server
   with_items:
     - src: fileset/LinuxAll.conf.j2
