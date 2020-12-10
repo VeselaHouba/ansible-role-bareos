@@ -1,69 +1,18 @@
 ---
 kind: pipeline
-name: molecule
+name: release
 workspace:
   path: veselahouba.bareos
-
-environment:
-  DISTROS_SERVER: ubuntu1804 debian10 debian9
-  DISTROS_CLIENT: ubuntu1604 ubuntu1804 debian9 debian10
-
-services:
-  - name: docker
-    image: docker:dind
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
-      - name: sysfs
-        path: /sys/fs/cgroup
-
-volumes:
-  - name: dockersock
-    temp: {}
-  - name: sysfs
-    host:
-      path: /sys/fs/cgroup
-
+when:
+  event:
+    - tag
 steps:
-  - name: Lint
+  - name: publish
     image: veselahouba/molecule
+    environment:
+      GALAXY_API_KEY:
+        from_secret: GALAXY_API_KEY
     commands:
-      - shellcheck_wrapper
-      - flake8
-      - yamllint .
-      - ansible-lint
-
-  - name: Molecule test
-    image: veselahouba/molecule
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
-      - name: sysfs
-        path: /sys/fs/cgroup
-    commands:
-      - sleep 5
-      - docker ps -a
-      - ansible --version
-      - molecule --version
-      # Loop through all servers and client combinations
-      - |
-        for MOLECULE_DISTRO_SERVER in $${DISTROS_SERVER}; do
-          for MOLECULE_DISTRO_CLIENT in $${DISTROS_CLIENT}; do
-            export MOLECULE_DISTRO_SERVER
-            export MOLECULE_DISTRO_CLIENT
-            molecule test
-          done
-        done
-
-# TODO: galaxy pipeline
-
-# ---
-# kind: pipeline
-# name: release
-# workspace:
-#   path: veselahouba.sftp
-# when:
-#   event:
-#     - tag
+      - >
+        ansible-galaxy role import --api-key $${GALAXY_API_KEY}
+        $${DRONE_REPO_OWNER} $${DRONE_REPO_NAME}
