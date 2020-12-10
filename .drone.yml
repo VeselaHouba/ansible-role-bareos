@@ -57,13 +57,21 @@ steps:
           done
         done
 
-# TODO: galaxy pipeline
-
-# ---
-# kind: pipeline
-# name: release
-# workspace:
-#   path: veselahouba.sftp
-# when:
-#   event:
-#     - tag
+---
+kind: pipeline
+name: release
+depends_on:
+  - molecule
+trigger:
+  event:
+    - tag
+steps:
+  - name: publish
+    image: veselahouba/molecule
+    environment:
+      GALAXY_API_KEY:
+        from_secret: GALAXY_API_KEY
+    commands:
+      - >
+        ansible-galaxy role import --api-key $${GALAXY_API_KEY}
+        $${DRONE_REPO_OWNER} $${DRONE_REPO_NAME}
