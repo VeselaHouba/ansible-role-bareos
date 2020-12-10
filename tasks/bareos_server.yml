@@ -66,7 +66,9 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: 0640
+    owner: bareos
+    group: bareos
   notify: reload bareos server
   with_items:
     - src: fileset/LinuxAll.conf.j2

@@ -36,7 +36,7 @@
       template:
         src: bareos-dir.conf.j2
         dest: /etc/bareos/bareos-fd.d/director/bareos-dir.conf
-        mode: 0644
+        mode: 0640
       delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
       register: _bareos_client_config
 
@@ -66,7 +66,9 @@
       template:
         src: backup-job.conf.j2
         dest: "/etc/bareos/bareos-dir.d/job/backup-{{ item.name }}.conf"
-        mode: 0644
+        mode: 0640
+        owner: bareos
+        group: bareos
       when: item.enable_backup_job
       register: _bareos_backup_job
       notify: reload bareos server
