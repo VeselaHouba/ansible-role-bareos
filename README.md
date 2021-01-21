@@ -6,6 +6,8 @@ Role to setup BareOS server and clients.
 # Variables
 ## Server
 
+Note: More options can be seen in `defaults/main.yml`
+
 - `bareos_install_server` - Install packages valid for server (`false`). Note that this also installs postgresql!
 - `bareos_setup_db` - Check if postgresql DB `bareos` exists. If not, create and fill with data (`false`)
 - `bareos_sensu_postgres_pass` - Set pass for user sensu to postgresql
@@ -37,8 +39,8 @@ Some tasks will be delegated from backup server to this client
 - `enable_backup_job` - Will create backup job `DefaultJobLinux`
 - `state` - When set to `absent`, client will be removed from server config (default: `present`)
 - `autostart` - Schedule first backup right away (default: `true`)
-- `director_ip` - Same as `bareos_director`, just different place to setup
-- `director_name` - Same as `bareos_director`, just different place to setup
+- `director_ip` - [Optional] Same as `bareos_director`, just different place to setup
+- `director_name` - [Optional] Same as `bareos_director`, just different place to setup
 
 
 # Client
