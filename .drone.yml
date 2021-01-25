@@ -57,6 +57,18 @@ steps:
           done
         done
 
+  - name: Slack notification
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+      channel: ci-cd
+      template: >
+        Molecule for `{{build.branch}}` failed.
+        {{build.link}}
+    when:
+      status:
+        - failure
 ---
 kind: pipeline
 name: release
@@ -75,3 +87,22 @@ steps:
       - >
         ansible-galaxy role import --api-key $${GALAXY_API_KEY}
         $${DRONE_REPO_OWNER} $${DRONE_REPO_NAME}
+
+  - name: Slack notification
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+      channel: ci-cd
+      template: >
+        {{#success build.status}}
+          Publish for `{{build.tag}}` succeeded.
+          {{build.link}}
+        {{else}}
+          Publish for `{{build.tag}}` failed.
+          {{build.link}}
+        {{/success}}
+    when:
+      status:
+        - success
+        - failure
