@@ -25,6 +25,8 @@
 - name: Register clients
   include_tasks: register_client.yml
   with_items: "{{ bareos_clients }}"
+  loop_control:
+    label: "{{ item.name }}"
   when:
     - bareos_install_server
     - item.ansible_delegate_hostname|default(item.name) in ansible_play_hosts
