@@ -1,0 +1,10 @@
+---
+bareos_os_version: xUbuntu_20.04
+bareos_release: 20
+bareos_db_package: postgresql-12
+_bareos_support_packages:
+  - gpgv2
+  - gpg-agent
+bareos_apt_monitoring_packages:
+  - python3-psycopg2
+  - python3-mysqldb
