@@ -53,7 +53,7 @@ steps:
           for MOLECULE_DISTRO_CLIENT in $${DISTROS_CLIENT}; do
             export MOLECULE_DISTRO_SERVER
             export MOLECULE_DISTRO_CLIENT
-            molecule test
+            molecule test --all
           done
         done
 
