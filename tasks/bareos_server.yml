@@ -77,8 +77,8 @@
     src: "admin.conf.j2"
     dest: /etc/bareos/bareos-dir.d/console/admin.conf 
     mode: 0700
-    owner: root
-    group: root
+    owner: bareos
+    group: bareos
   notify: reload bareos server
   when: bareos_setup_webui_admin_console
 
