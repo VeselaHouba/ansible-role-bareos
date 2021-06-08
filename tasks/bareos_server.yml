@@ -72,6 +72,16 @@
     - src: jobdefs/DefaultJobLinux.conf.j2
       dest: /etc/bareos/bareos-dir.d/jobdefs/DefaultJobLinux.conf
 
+- name: Add webui admin console
+  template:
+    src: "admin.conf.j2"
+    dest: /etc/bareos/bareos-dir.d/console/admin.conf 
+    mode: 0700
+    owner: root
+    group: root
+  notify: reload bareos server
+  when: bareos_setup_webui_admin_console
+
 - name: Make sure daemons are started
   systemd:
     name: "{{ item }}"

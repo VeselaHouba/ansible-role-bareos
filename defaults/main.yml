@@ -6,6 +6,9 @@ bareos_install_server: false
 # Can be dangerous, use with care
 bareos_setup_db: false
 bareos_sensu_postgres_pass: password
+bareos_setup_webui_admin_console: false
+bareos_webui_admin_name: admin
+bareos_webui_admin_password: secret
 bareos_clients: {}
 bareos_director: {}
 # Example
