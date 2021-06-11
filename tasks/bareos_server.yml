@@ -75,7 +75,7 @@
 - name: Add webui admin console
   template:
     src: "admin.conf.j2"
-    dest: /etc/bareos/bareos-dir.d/console/admin.conf 
+    dest: /etc/bareos/bareos-dir.d/console/admin.conf
     mode: 0700
     owner: bareos
     group: bareos
@@ -90,6 +90,7 @@
     - bareos-dir
     - bareos-sd
     - bareos-fd
+    - apache2
 
 - name: Upload useful scripts
   copy:

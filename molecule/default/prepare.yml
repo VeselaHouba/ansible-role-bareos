@@ -8,6 +8,7 @@
         name:
           - iputils-ping
           - iproute2
+          - curl
 
     - name: Gather facts again - with IPs
       setup:

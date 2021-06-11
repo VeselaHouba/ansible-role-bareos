@@ -1,0 +1,10 @@
+---
+bareos_install_server: true
+bareos_setup_db: true
+bareos_sensu_postgres_pass: password
+bareos_clients:
+  - name: instance02
+    address: "{{ hostvars['instance02'].ansible_default_ipv4.address }}"
+    password: instance02_password
+    enable_backup_job: true
+bareos_setup_webui_admin_console: true
