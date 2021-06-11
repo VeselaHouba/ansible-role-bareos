@@ -1,12 +1,13 @@
 import os
 
 import testinfra.utils.ansible_runner
+from packaging import version
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('server')
 
 
-def test_check_bareos_client(host):
+def test_check_bareos_job(host):
     with host.sudo('postgres'):
         cmd = "psql bareos -c 'select jobstatus from job where jobid=1'"
         jobstat = host.run(cmd)
@@ -14,6 +15,6 @@ def test_check_bareos_client(host):
         assert 'T' in jobstat.stdout
 
 
-def test_check_bareos_console(host):
-    c = host.run('curl http://localhost/bareos-webui/')
-    assert 'Login form' in c.stdout
+def test_bareos_release(host):
+    v = host.package("bareos").version
+    assert version.parse(v) > version.parse("20")

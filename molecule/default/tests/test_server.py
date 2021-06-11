@@ -12,8 +12,3 @@ def test_check_bareos_client(host):
         jobstat = host.run(cmd)
         assert jobstat.rc == 0
         assert 'T' in jobstat.stdout
-
-
-def test_check_bareos_console(host):
-    c = host.run('curl http://localhost/bareos-webui/')
-    assert 'Login form' in c.stdout

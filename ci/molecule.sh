@@ -9,7 +9,6 @@ docker \
   -e MOLECULE_DISTRO_CLIENT \
   -e MOLECULE_NO_LOG=false \
   veselahouba/molecule bash -c "
-  shellcheck_wrapper && \
   flake8 && \
   yamllint . && \
   ansible-lint && \
