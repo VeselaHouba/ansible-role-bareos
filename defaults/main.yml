@@ -1,5 +1,5 @@
 ---
-bareos_release: latest
+bareos_release: 20
 bareos_db_package: postgresql-11
 bareos_install_client: false
 bareos_install_server: false
