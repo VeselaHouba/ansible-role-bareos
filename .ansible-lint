@@ -1,0 +1,8 @@
+---
+skip_list:
+  - '106'
+  - '306'
+  - '503'
+exclude_paths:
+  - molecule
+  - .drone.yml
