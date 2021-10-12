@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOBID=$(runuser -u postgres -- psql bareos -t -c "select jobid from job where level like 'F' and jobstatus like 'T' and job not like 'BackupCatalog%' order by endtime asc limit 1;")
+JOBID=$(runuser -u postgres -- psql bareos -t -c "select jobid from job where type like 'B' and level like 'F' and jobstatus like 'T' and job not like 'BackupCatalog%' order by endtime asc limit 1;")
 echo "oldest jobid: ${JOBID}"
 MEDIAIDS=$(runuser -u postgres -- psql bareos -t -c "select distinct mediaid from jobmedia where jobid=${JOBID} order by mediaid asc;")
 for MEDIAID in ${MEDIAIDS}; do
