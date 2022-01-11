@@ -1,12 +1,11 @@
-Role Name
-=========
+# Bareos
 
 Role to setup BareOS server and clients.
 
 # Variables
 ## Server
 
-Note: More options can be seen in `defaults/main.yml`
+__Note:__ More options can be seen in `defaults/main.yml`
 
 - `bareos_install_server` - Install packages valid for server (`false`). Note that this also installs postgresql!
 - `bareos_setup_db` - Check if postgresql DB `bareos` exists. If not, create and fill with data (`false`)
@@ -21,15 +20,15 @@ bareos_director:
 
 ```
 bareos_clients:
-  - name: hostbill
-    ansible_delegate_hostname: hostbill
-    address: 146.255.58.229
-    password: "{{ vault_bareos_hostbill_password }}"
+  - name: some-hostname
+    ansible_delegate_hostname: some-hostname
+    address: 10.1.1.1
+    password: MySuperSecretPassword
     enable_backup_job: true
-    state: present
-    autostart: true
-    director_ip: 10.8.8.1
-    director_name: backup
+    state: present                      # optional
+    autostart: true                     # optional
+    director_ip: 10.0.0.1               # optional
+    director_name: backup               # optional
 ```
 
 __NOTES:__
@@ -43,7 +42,7 @@ Some tasks will be delegated from backup server to this client
 - `director_name` - [Optional] Same as `bareos_director`, just different place to setup
 
 
-# Client
+## Client
 - `bareos_install_client` - Install packages for client (`false`)
 
 
@@ -63,12 +62,10 @@ Example Playbook
     - { name: bareos, tags: bareos }
 ```
 
-License
--------
+# License
 
-BSD
+GNU GPL
 
-Author Information
-------------------
+# Author Information
 
-<!-- TODO -->
+Jan Michalek a.k.a. VeselaHouba
