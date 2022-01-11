@@ -1,5 +1,6 @@
 ---
-bareos_os_version: Debian_9.0
-bareos_db_package: postgresql-9.6
+bareos_os_version: Debian_11
+bareos_db_package: postgresql-13
 _bareos_support_packages:
   - gpg
+  - gpgv2

@@ -4,3 +4,8 @@ bareos_db_package: postgresql-11
 _bareos_support_packages:
   - gpg
   - gpgv2
+bareos_apt_monitoring_packages:
+  - python-psycopg2
+  - python-mysqldb
+  - python3-psycopg2
+  - python3-mysqldb
