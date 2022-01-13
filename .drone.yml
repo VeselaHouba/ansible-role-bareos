@@ -1,7 +1,7 @@
 ---
 # Pipelines https://github.com/VeselaHouba/molecule/tree/master/dronelib
 kind: template
-load: drone-docker-server-client-matrix.star
+load: drone-docker.star
 data:
   docker_images:
     - debian9

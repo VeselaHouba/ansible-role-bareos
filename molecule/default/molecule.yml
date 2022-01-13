@@ -5,7 +5,7 @@ driver:
   name: docker
 platforms:
   - name: server
-    image: ${MOLECULE_IMAGE_SERVER}
+    image: ${MOLECULE_IMAGE}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -13,7 +13,7 @@ platforms:
     pre_build_image: true
 
   - name: client
-    image: ${MOLECULE_IMAGE_CLIENT}
+    image: ${MOLECULE_IMAGE}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
