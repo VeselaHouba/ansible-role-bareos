@@ -1,111 +1,105 @@
 ---
-- block:
-    - name: Register client {{ item.name }}
-      shell: >
-        echo
-        "configure add client "
-        "name={{ item.name }} "
-        "address={{ item.address }} "
-        "password={{ item.password }}" |
-        bconsole
-      args:
-        creates: "/etc/bareos/bareos-dir.d/client/{{ item.name }}.conf"
-      register: _bconsole_output
-      notify: reload bareos server
+- name: Register client {{ item.name }}
+  shell: >
+    echo
+    "configure add client "
+    "name={{ item.name }} "
+    "address={{ item.address }} "
+    "password={{ item.password }}" |
+    bconsole
+  args:
+    creates: "/etc/bareos/bareos-dir.d/client/{{ item.name }}.conf"
+  register: _bconsole_output
+  notify: reload bareos server
 
-    - name: Generate md5sum from password
-      shell: "echo -n {{ item.password }} | md5sum | awk '{print $1}'"
-      register: _bareos_md5
-      changed_when: false
+- name: Generate md5sum from password
+  shell: "echo -n {{ item.password }} | md5sum | awk '{print $1}'"
+  register: _bareos_md5
+  changed_when: false
 
-    - name: Make password md5 more civilized variable
-      set_fact:
-        bareos_client_password_md5: "{{ _bareos_md5.stdout }}"
+- name: Make password md5 more civilized variable
+  set_fact:
+    bareos_client_password_md5: "{{ _bareos_md5.stdout }}"
 
-    - name: Make sure director's IP is defined on {{ item.name }}
-      lineinfile:
-        path: /etc/hosts
-        regexp: "^{{ item.director_ip }}"
-        line: "{{ item.director_ip }} {{ item.director_name }}"
-      when:
-        - item.director_ip is defined
-        - item.director_name is defined
-      delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
+- name: Make sure director's IP is defined on {{ item.name }}
+  lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ item.director_ip }}"
+    line: "{{ item.director_ip }} {{ item.director_name }}"
+  when:
+    - item.director_ip is defined
+    - item.director_name is defined
+  delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
 
-    - name: Generate client config on {{ item.name }}
-      template:
-        src: bareos-dir.conf.j2
-        dest: /etc/bareos/bareos-fd.d/director/bareos-dir.conf
-        mode: 0640
-      delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
-      register: _bareos_client_config
+- name: Generate director config on {{ item.name }}
+  template:
+    src: bareos-dir.conf.j2
+    dest: /etc/bareos/bareos-fd.d/director/bareos-dir.conf
+    mode: 0640
+  delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
+  register: _bareos_director_config
 
-    - name: Restart bareos client on {{ item.name }}
-      systemd:
-        name: bareos-fd
-        state: restarted
-      when: _bareos_client_config.changed
-      delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
+- name: Generate client self config on {{ item.name }}
+  template:
+    src: myself.conf.j2
+    dest: /etc/bareos/bareos-fd.d/client/myself.conf
+    mode: 0640
+    owner: bareos
+    group: bareos
+  delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
+  register: _bareos_client_config
 
-    - name: Check {{ item.name }} client status
-      shell: >
-        echo
-        "status client={{ item.name }}"
-        | bconsole
-      register: _bconsole_output
-      failed_when:
-        (
-          'Error' in _bconsole_output.stdout
-          and not 'Errors=0' in _bconsole_output.stdout
-          and not 'G  Error' in _bconsole_output.stdout
-        ) or
-        ( 'Failed' in _bconsole_output.stdout )
-      changed_when: false
+- name: Restart bareos client on {{ item.name }}
+  systemd:
+    name: bareos-fd
+    state: restarted
+  when:
+   - _bareos_director_config.changed or _bareos_client_config.changed
+  delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
 
-    - name: Add backup job
-      template:
-        src: backup-job.conf.j2
-        dest: "/etc/bareos/bareos-dir.d/job/backup-{{ item.name }}.conf"
-        mode: 0640
-        owner: bareos
-        group: bareos
-      when: item.enable_backup_job
-      register: _bareos_backup_job
-      notify: reload bareos server
+- name: Check {{ item.name }} client status
+  shell: >
+    echo
+    "status client={{ item.name }}"
+    | bconsole
+  register: _bconsole_output
+  failed_when:
+    (
+      'Error' in _bconsole_output.stdout
+      and not 'Errors=0' in _bconsole_output.stdout
+      and not 'G  Error' in _bconsole_output.stdout
+    ) or
+    ( 'Failed' in _bconsole_output.stdout )
+  changed_when: false
 
-    - name: Flush handlers, to make sure bareos is reloaded
-      meta: flush_handlers
+- name: Add backup job
+  template:
+    src: backup-job.conf.j2
+    dest: "/etc/bareos/bareos-dir.d/job/backup-{{ item.name }}.conf"
+    mode: 0640
+    owner: bareos
+    group: bareos
+  when: item.enable_backup_job
+  register: _bareos_backup_job
+  notify: reload bareos server
 
-    - name: Start first backup
-      shell: >
-        echo
-        "run job=backup-{{ item.name }} client={{ item.name }} yes"
-        | bconsole
-      register: _bconsole_output
-      failed_when: ('Error' in _bconsole_output.stdout) or ('Failed' in _bconsole_output.stdout) or ('not found' in _bconsole_output.stdout)
-      when:
-        - item.autostart | default(true)
-        - _bareos_backup_job.changed
+- name: Flush handlers, to make sure bareos is reloaded
+  meta: flush_handlers
 
-    - name: Update client address if changed
-      lineinfile:
-        path: /etc/bareos/bareos-dir.d/client/{{ item.name }}.conf
-        regexp: '^  Address = '
-        line: '  Address = {{ item.address }}'
-      notify: reload bareos server
+- name: Start first backup
+  shell: >
+    echo
+    "run job=backup-{{ item.name }} client={{ item.name }} yes"
+    | bconsole
+  register: _bconsole_output
+  failed_when: ('Error' in _bconsole_output.stdout) or ('Failed' in _bconsole_output.stdout) or ('not found' in _bconsole_output.stdout)
+  when:
+    - item.autostart | default(true)
+    - _bareos_backup_job.changed
 
-  when: (item.state | default('present')) == 'present'
-
-- block:
-    - name: Unregister client {{ item.name }}
-      file:
-        path: "/etc/bareos/bareos-dir.d/client/{{ item.name }}.conf"
-        state: absent
-      notify: reload bareos server
-
-    - name: Cleanup {{ item.name }} client backup job
-      file:
-        path: "/etc/bareos/bareos-dir.d/job/backup-{{ item.name }}.conf"
-        state: absent
-      notify: reload bareos server
-  when: (item.state | default('present')) == 'absent'
+- name: Update client address if changed
+  lineinfile:
+    path: /etc/bareos/bareos-dir.d/client/{{ item.name }}.conf
+    regexp: '^  Address = '
+    line: '  Address = {{ item.address }}'
+  notify: reload bareos server

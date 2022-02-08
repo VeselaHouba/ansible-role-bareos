@@ -1,0 +1,12 @@
+---
+- name: Unregister client {{ item.name }}
+  file:
+    path: "/etc/bareos/bareos-dir.d/client/{{ item.name }}.conf"
+    state: absent
+  notify: reload bareos server
+
+- name: Cleanup {{ item.name }} client backup job
+  file:
+    path: "/etc/bareos/bareos-dir.d/job/backup-{{ item.name }}.conf"
+    state: absent
+  notify: reload bareos server
