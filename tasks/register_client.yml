@@ -54,7 +54,16 @@
     name: bareos-fd
     state: restarted
   when:
-   - _bareos_director_config.changed or _bareos_client_config.changed
+    - _bareos_director_config.changed or _bareos_client_config.changed
+  delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
+
+- name: Wait for fd to start on {{ item.name }}
+  wait_for:
+    port: 9102
+    host: 127.0.0.1
+    delay: 5
+    sleep: 5
+    timeout: 60
   delegate_to: "{{ item.ansible_delegate_hostname | default(item.name) }}"
 
 - name: Check {{ item.name }} client status

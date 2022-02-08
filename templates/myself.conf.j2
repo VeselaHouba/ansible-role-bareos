@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+Client {
+  Name = {{ item.name }}
+  Maximum Concurrent Jobs = 20
+{% if item.max_job_bandwidth is defined %}
+  Maximum Bandwidth Per Job = {{ item.max_job_bandwidth }}
+{% endif %}
+}

@@ -79,7 +79,9 @@
     mode: 0700
     owner: bareos
     group: bareos
-  notify: reload bareos server
+  notify:
+    - reload bareos server
+    - restart apache
   when: bareos_setup_webui_admin_console
 
 - name: Make sure daemons are started

@@ -7,4 +7,5 @@ bareos_clients:
     address: "{{ hostvars['client'].ansible_default_ipv4.address }}"
     password: client_password
     enable_backup_job: true
+    max_job_bandwidth: 1 mb/s
 bareos_setup_webui_admin_console: true

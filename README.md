@@ -29,6 +29,7 @@ bareos_clients:
     autostart: true                     # optional
     director_ip: 10.0.0.1               # optional
     director_name: backup               # optional
+    max_job_bandwidth: 1 mb/s           # optional
 ```
 
 __NOTES:__
