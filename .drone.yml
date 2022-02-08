@@ -1,11 +1,4 @@
 ---
-# Pipelines https://github.com/VeselaHouba/molecule/tree/master/dronelib
 kind: template
-load: drone-docker.star
-data:
-  docker_images:
-    - debian9
-    - debian10
-    - debian11
-    - ubuntu1804
-    - ubuntu2004
+load: drone-hetzner.star
+# Pipelines https://github.com/VeselaHouba/molecule/tree/master/dronelib

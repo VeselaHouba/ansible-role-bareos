@@ -1,0 +1,18 @@
+---
+bareos_install_server: true
+bareos_setup_db: true
+bareos_sensu_postgres_pass: password
+bareos_clients:
+  - name: "{{ lookup('env', 'REPO_NAME') }}-{{ lookup('env', 'OS_VERSION') }}-{{ lookup('env', 'REF') }}-client"
+    address: client
+    password: client_password
+    enable_backup_job: true
+bareos_excludes:
+  - /usr
+  - /var/lib/bareos
+  - /var/lib/bareos/storage
+  - /proc
+  - /tmp
+  - /var/tmp
+  - /.journal
+  - /.fsck

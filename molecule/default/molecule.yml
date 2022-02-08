@@ -2,23 +2,20 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: hetznercloud
 platforms:
-  - name: server
+  - name: ${REPO_NAME}-${OS_VERSION}-${REF}-server
+    server_type: cx11
     image: ${MOLECULE_IMAGE}
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
-    pre_build_image: true
-
-  - name: client
+    custom_ssh_key_name: molecule.admin
+    groups:
+      - server
+  - name: ${REPO_NAME}-${OS_VERSION}-${REF}-client
+    server_type: cx11
     image: ${MOLECULE_IMAGE}
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    privileged: true
-    pre_build_image: true
+    custom_ssh_key_name: molecule.admin
+    groups:
+      - client
 provisioner:
   name: ansible
 verifier:

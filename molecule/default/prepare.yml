@@ -6,20 +6,19 @@
       apt:
         update_cache: true
         name:
+          - locales
+          - tzdata
+          - apt-transport-https
           - iputils-ping
           - iproute2
           - curl
 
-    - name: Gather facts again - with IPs
-      setup:
-
-    # ugly but working - docker won't let us overrwrite file with lineinfile
-    - name: Add hosts to /etc/hosts
-      shell: echo "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}" >> /etc/hosts
-      with_items: "{{ groups['all'] }}"
+    - name: Add server to /etc/hosts
+      shell: echo "{{ hostvars[item].ansible_default_ipv4.address }} server {{ item }}" >> /etc/hosts
+      with_items: "{{ groups['server'] }}"
       changed_when: false
 
-    - name: Fix strange behavior of /dev/null on some docker images
-      file:
-        path: /dev/null
-        mode: 0666
+    - name: Add client server to /etc/hosts
+      shell: echo "{{ hostvars[item].ansible_default_ipv4.address }} client {{ item }}" >> /etc/hosts
+      with_items: "{{ groups['client'] }}"
+      changed_when: false

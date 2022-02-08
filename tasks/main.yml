@@ -9,6 +9,11 @@
   apt:
     name: "{{ _bareos_support_packages }}"
 
+- name: Install gpg-agent on new distros
+  apt:
+    name: gpg-agent
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version is version('11','>=')
+
 - name: Add BareOS apt-key
   apt_key:
     url: "http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version }}/Release.key"

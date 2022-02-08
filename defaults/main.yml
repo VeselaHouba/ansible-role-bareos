@@ -31,3 +31,4 @@ bareos_extra_fileset_opts: ""
 bareos_apt_monitoring_packages:
   - python3-psycopg2
   - python3-mysqldb
+  - gpg
