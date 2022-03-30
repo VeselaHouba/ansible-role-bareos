@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+Schedule {
+  Name = "{{ item.name }}"
+  Run = {{ item.full }}
+{% if item.incr is defined %}
+  Run = {{ item.incr }}
+{% endif %}
+}

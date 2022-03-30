@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+FileSet {
+  Name = "{{ item.name }}"
+  Description = "{{ item.description }}"
+  Include {
+    Options {
+      Signature = MD5 # calculate md5 checksum per file
+      One FS = No     # change into other filessytems
+    }
+    File = {{ item.include_file }}
+  }
+  # Things that usually have to be excluded
+  # You have to exclude /var/lib/bareos/storage
+  # on your bareos server
+  Exclude {
+{% for file in bareos_excludes %}
+    File = {{ file }}
+{% endfor %}
+  }
+}

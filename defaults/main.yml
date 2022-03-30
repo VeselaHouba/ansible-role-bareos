@@ -5,18 +5,12 @@ bareos_install_client: false
 bareos_install_server: false
 # Can be dangerous, use with care
 bareos_setup_db: false
-bareos_sensu_postgres_pass: password
+bareos_setup_db_sensu: false
 bareos_setup_webui_admin_console: false
 bareos_webui_admin_name: admin
-bareos_webui_admin_password: secret
-bareos_clients: {}
-bareos_director: {}
-# Example
-#  - name: ubuntu-1604
-#    ansible_delegate_hostname: ubuntu-1604
-#    address: 192.168.33.10
-#    password: password
-
+bareos_director:
+  - name: bareos-dir
+    ip: "{{ bareos_dir_ip_eth }}"
 # uncomment for upgrading to specific version
 # bareos_version: "18.2.5-*"
 bareos_excludes:

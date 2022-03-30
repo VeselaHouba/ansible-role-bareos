@@ -40,7 +40,9 @@
         /usr/lib/bareos/scripts/make_bareos_tables &&
         /usr/lib/bareos/scripts/grant_bareos_privileges
       when: _bareos_db_exists.rc != 0
+  when: bareos_setup_db
 
+- block:
     - name: Create Postgres Monitoring User
       become: true
       become_user: postgres
@@ -56,21 +58,144 @@
         role: sensu
         objs: ALL_IN_SCHEMA
         privs: SELECT
-  when: bareos_setup_db
+  when: bareos_setup_db_sensu
 
-- name: Upload bareos config files
+- name: Create bareos dir director config file
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: 0640
+    src: bareos-dir/director/bareos-dir.conf.j2
+    dest: /etc/bareos/bareos-dir.d/director/bareos-dir.conf
     owner: bareos
     group: bareos
-  notify: reload bareos server
-  with_items:
-    - src: fileset/LinuxAll.conf.j2
-      dest: /etc/bareos/bareos-dir.d/fileset/LinuxAll.conf
-    - src: jobdefs/DefaultJobLinux.conf.j2
-      dest: /etc/bareos/bareos-dir.d/jobdefs/DefaultJobLinux.conf
+    mode: '0640'
+
+- name: Create bareos sd director config file
+  template:
+    src: bareos-sd/director/bareos-dir.conf.j2
+    dest: /etc/bareos/bareos-sd.d/director/bareos-dir.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+
+- name: Create bareos fd director config file
+  template:
+    src: bareos-fd/director/bareos-dir.conf.j2
+    dest: /etc/bareos/bareos-fd.d/director/bareos-dir.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+
+- name: Create bareos fileset config files
+  template:
+    src: bareos-dir/fileset/fileset.conf.j2
+    dest: /etc/bareos/bareos-dir.d/fileset/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_filesets }}"
+
+- name: Create bareos pool config files
+  template:
+    src: bareos-dir/pool/pool.conf.j2
+    dest: /etc/bareos/bareos-dir.d/pool/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_pools }}"
+
+- name: Create bareos dir storage config files
+  template:
+    src: bareos-dir/storage/storage.conf.j2
+    dest: /etc/bareos/bareos-dir.d/storage/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_dir_storage }}"
+
+- name: Create bareos device config files
+  template:
+    src: bareos-sd/device/device.conf.j2
+    dest: /etc/bareos/bareos-sd.d/device/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_devices }}"
+
+- name: Create bareos sd storage config file
+  template:
+    src: bareos-sd/storage/bareos-sd.conf.j2
+    dest: /etc/bareos/bareos-sd.d/storage/bareos-sd.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+
+- name: Create bareos schedule config files
+  template:
+    src: bareos-dir/schedule/schedule.conf.j2
+    dest: /etc/bareos/bareos-dir.d/schedule/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_schedules }}"
+
+- name: Create bareos jobdef config files
+  template:
+    src: bareos-dir/jobdefs/jobdef.conf.j2
+    dest: /etc/bareos/bareos-dir.d/jobdefs/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_jobdefs }}"
+
+- name: Create bareos catalog job config file
+  template:
+    src: bareos-dir/job/BackupCatalog.conf.j2
+    dest: /etc/bareos/bareos-dir.d/job/BackupCatalog.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+
+- name: Create bareos job config files
+  template:
+    src: bareos-dir/job/job.conf.j2
+    dest: /etc/bareos/bareos-dir.d/job/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_jobs }}"
+
+- name: Create bareos client config files
+  template:
+    src: bareos-dir/client/client.conf.j2
+    dest: /etc/bareos/bareos-dir.d/client/{{ item.name }}.conf
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop: "{{ bareos_clients }}"
+
+- name: Create bareos messages config files
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: bareos
+    group: bareos
+    mode: '0640'
+  loop:
+      - { src: 'bareos-dir/messages/Daemon.conf.j2', dest: '/etc/bareos/bareos-dir.d/messages/Daemon.conf' }
+      - { src: 'bareos-dir/messages/Standard.conf.j2', dest: '/etc/bareos/bareos-dir.d/messages/Standard.conf' }
+
+- name: Change default catalog password
+  ansible.builtin.lineinfile:
+    path: /etc/bareos/bareos-dir.d/catalog/MyCatalog.conf
+    regexp: '^  dbpassword ='
+    line: '  dbpassword = "{{ bareos_postgres_pass }}"'
+
+- name: Add bconsole config file
+  template:
+    src: "bconsole.conf.j2"
+    dest: /etc/bareos/bconsole.conf
+    mode: 0700
+    owner: bareos
+    group: bareos
 
 - name: Add webui admin console
   template:

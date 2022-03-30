@@ -1,0 +1,10 @@
+#
+# Bareos User Agent (or Console) Configuration File
+#
+
+Director {
+  Name = bareos-dir
+  address = localhost
+  Password = "{{ bareos_director_password  }}"
+  Description = "Bareos Console credentials for local Director"
+}

@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+JobDefs {
+  Name = "{{ item.name }}"
+  Type = Backup
+  Level = {{ item.level }}
+  Client = {{ item.client }}
+  FileSet = "{{ item.fileset }}"
+  Schedule = "{{ item.schedule }}"
+  Storage = {{ item.storage }}
+  Messages = Standard
+  Pool = {{ item.pool }}
+  Priority = {{ item.priority | default('10') }}
+  Write Bootstrap = "/var/lib/bareos/%c.bsr"
+  Full Backup Pool = {{ item.full_pool }}
+{% if item.incr_pool is defined %}
+  Incremental Backup Pool = {{ item.incr_pool }}
+{% endif %}
+  Allow Duplicate Jobs = no
+  Cancel Lower Level Duplicates = yes
+  Cancel Queued Duplicates = yes
+}

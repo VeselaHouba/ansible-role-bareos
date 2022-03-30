@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+Pool {
+  Name = "{{ item.name }}"
+  Pool Type = Backup
+  Recycle = yes                       # Bareos can automatically recycle Volumes
+  AutoPrune = yes                     # Prune expired volumes
+  Volume Retention = {{ item.retention }}          # How long should the Incremental Backups be kept?  (#12)
+  Maximum Volume Bytes = {{ item.max_vol_bytes }}           # Limit Volume size to something reasonable
+  Maximum Volumes = {{ item.max_vol }}               # Limit number of Volumes in Pool  
+  Label Format = "{{ item.label }}"
+}

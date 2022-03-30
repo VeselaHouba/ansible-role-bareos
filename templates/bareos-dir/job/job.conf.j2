@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+Job {
+  Name = "{{ item.name }}"
+  JobDefs = "{{ item.jobdef }}"
+  Client = "{{ item.client }}"
+  Maximum Concurrent Jobs = 50
+  Allow Duplicate Jobs = no
+}

@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+Client {
+  Name = {{ item.name }}
+  Address = "{{ item.address }}"
+  Password = "{{ bareos_client_password }}"
+  Maximum Concurrent Jobs = 50
+}
