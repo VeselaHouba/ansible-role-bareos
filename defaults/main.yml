@@ -3,6 +3,7 @@ bareos_release: 21
 bareos_db_package: postgresql-12
 bareos_install_client: false
 bareos_install_server: false
+bareos_register_clients: true
 # Can be dangerous, use with care
 bareos_setup_db: false
 bareos_setup_db_sensu: false

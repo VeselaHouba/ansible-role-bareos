@@ -37,6 +37,7 @@
     label: "{{ item.name }}"
   when:
     - bareos_install_server
+    - bareos_register_clients
     - item.ansible_delegate_hostname|default(item.name) in ansible_play_hosts
     - item.state | default('present') == 'present'
 
