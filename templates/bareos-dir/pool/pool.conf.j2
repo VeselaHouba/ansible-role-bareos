@@ -2,10 +2,12 @@
 Pool {
   Name = "{{ item.name }}"
   Pool Type = Backup
-  Recycle = yes                       # Bareos can automatically recycle Volumes
-  AutoPrune = yes                     # Prune expired volumes
-  Volume Retention = {{ item.retention }}          # How long should the Incremental Backups be kept?  (#12)
-  Maximum Volume Bytes = {{ item.max_vol_bytes }}           # Limit Volume size to something reasonable
+  Recycle = yes
+  AutoPrune = yes
+  Volume Retention = {{ item.retention }}
+{% if item.max_vol_bytes is defined %}
+  Maximum Volume Bytes = {{ item.max_vol_bytes }}
+{% endif %}
 {% if item.max_vol is defined %}
   Maximum Volumes = {{ item.max_vol }}
 {% endif %}
