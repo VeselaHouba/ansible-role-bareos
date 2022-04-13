@@ -6,6 +6,8 @@ Pool {
   AutoPrune = yes                     # Prune expired volumes
   Volume Retention = {{ item.retention }}          # How long should the Incremental Backups be kept?  (#12)
   Maximum Volume Bytes = {{ item.max_vol_bytes }}           # Limit Volume size to something reasonable
-  Maximum Volumes = {{ item.max_vol }}               # Limit number of Volumes in Pool  
+{% if item.max_vol is defined %}
+  Maximum Volumes = {{ item.max_vol }}
+{% endif %}
   Label Format = "{{ item.label }}"
 }
