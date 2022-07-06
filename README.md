@@ -13,7 +13,6 @@ __Note:__ More options can be seen in `defaults/main.yml`
 - `bareos_sensu_postgres_pass` - Set pass for user sensu to postgresql
 - `bareos_email` - Email address used for messages (Daemon, Standard) and Catalog bootstrap
 - `bareos_dir_ip_eth` - Director ethernet IP address
-- `bareos_dir_ip_ib` - [Optional] Director Infiniband IP address
 - `bareos_director` - If you need to override backup director IP address on your client's /etc/hosts
 ```
 bareos_director:
@@ -67,6 +66,7 @@ bareos_pools:
 bareos_dir_storage:
   - name: FileFoo
     device: FileStorageFoo
+    bareos_dir_ip: 10.0.0.1
 ```
 
 `bareos_devices`: List of devices in following format:

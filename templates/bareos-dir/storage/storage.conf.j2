@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 Storage {
   Name = "{{ item.name }}"
-  Address = "{{ bareos_dir_ip_ib | default(bareos_dir_ip_eth) }}"
+  Address = "{{ item.bareos_dir_ip }}"
   Password = "{{ bareos_storage_password }}"
   Media Type = File
   Device = {{ item.device }}
