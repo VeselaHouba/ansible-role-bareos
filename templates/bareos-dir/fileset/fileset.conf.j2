@@ -7,11 +7,11 @@ FileSet {
       Signature = MD5 # calculate md5 checksum per file
       One FS = No     # change into other filessytems
     }
-{%- for fileset in item.options %}
+{%- for option in item.options %}
     Options {
-{%- for data, subitem in fileset.items() -%}
-{% for subsubitem in subitem %}
-      {{ subsubitem }}
+{%- for data, suboption in option.items() -%}
+{% for line in suboption %}
+      {{ line }}
 {%- endfor -%}
 {%- endfor %}
     }
