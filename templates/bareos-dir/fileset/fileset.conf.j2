@@ -7,6 +7,7 @@ FileSet {
       Signature = MD5 # calculate md5 checksum per file
       One FS = No     # change into other filessytems
     }
+{% if item.options is defined %}
 {%- for option in item.options %}
     Options {
 {%- for data, suboption in option.items() -%}
@@ -16,6 +17,7 @@ FileSet {
 {%- endfor %}
     }
 {%- endfor %}
+{% endif %}
     File = {{ item.include_file }}
   }
   # Things that usually have to be excluded
