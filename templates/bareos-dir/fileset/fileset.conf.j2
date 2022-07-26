@@ -10,13 +10,13 @@ FileSet {
 {% if item.options is defined %}
 {%- for option in item.options %}
     Options {
-{%- for data, suboption in option.items() -%}
+{% for data, suboption in option.items() -%}
 {% for line in suboption %}
       {{ line }}
-{%- endfor -%}
-{%- endfor %}
+{% endfor -%}
+{% endfor %}
     }
-{%- endfor %}
+{% endfor %}
 {% endif %}
     File = {{ item.include_file }}
   }
