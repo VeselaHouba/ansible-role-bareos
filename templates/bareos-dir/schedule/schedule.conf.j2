@@ -5,4 +5,7 @@ Schedule {
 {% if item.incr is defined %}
   Run = {{ item.incr }}
 {% endif %}
+{% if item.enabled is defined %}
+  Enabled = {{ item.enabled }}
+{% endif %}
 }
