@@ -8,6 +8,7 @@
 - name: Install dependencies
   apt:
     name: "{{ _bareos_support_packages }}"
+  when: _bareos_support_packages is defined
 
 - name: Install gpg-agent on new distros
   apt:
@@ -17,10 +18,18 @@
 - name: Add BareOS apt-key
   apt_key:
     url: "http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version }}/Release.key"
+  when: ansible_os_family == 'Debian'
 
-- name: Ensure BareOS APT repo is present
+- name: Ensure BareOS repo is present Debian
   apt_repository:
     repo: "deb http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version }}/ /"
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure BareOS repo is present RHEL
+  ansible.builtin.yum_repository:
+    name: bareos
+    baseurl: http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version }}/
+  when: ansible_os_family == 'RedHat'
 
 - name: Install && setup bareos client
   include_tasks: bareos_client.yml

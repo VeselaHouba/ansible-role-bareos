@@ -1,7 +1,8 @@
 ---
 - name: Make sure bareos-client is installed
-  apt:
+  ansible.builtin.package:
     name: bareos-client
+    state: present
 
 - name: Create config dir on client
   file:
