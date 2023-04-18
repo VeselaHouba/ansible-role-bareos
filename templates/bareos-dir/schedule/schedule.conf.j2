@@ -1,13 +1,21 @@
 # {{ ansible_managed }}
 Schedule {
   Name = "{{ item.name }}"
+{% if item.full is iterable %}
 {% for line in item.full %}
   Run = {{ line }}
 {% endfor %}
+{% else %}
+  Run = {{ item.full }}
+{% endif %}
 {% if item.incr is defined %}
+{% if item.incr is iterable %}
 {% for line in item.incr %}
   Run = {{ line }}
 {% endfor %}
+{% else %}
+  Run = {{ line }}
+{% endif %}
 {% endif %}
 {% if item.enabled is defined %}
   Enabled = {{ item.enabled }}
