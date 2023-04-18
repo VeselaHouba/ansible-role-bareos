@@ -1,9 +1,13 @@
 # {{ ansible_managed }}
 Schedule {
   Name = "{{ item.name }}"
-  Run = {{ item.full }}
+{% for line in item.full %}
+  Run = {{ line }}
+{% endfor %}
 {% if item.incr is defined %}
-  Run = {{ item.incr }}
+{% for line in item.incr %}
+  Run = {{ line }}
+{% endfor %}
 {% endif %}
 {% if item.enabled is defined %}
   Enabled = {{ item.enabled }}
