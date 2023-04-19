@@ -28,6 +28,7 @@
 - name: Ensure BareOS repo is present RHEL
   ansible.builtin.yum_repository:
     name: bareos
+    description: Bareos repo
     baseurl: http://download.bareos.org/bareos/release/{{ bareos_release }}/{{ bareos_os_version }}/
   when: ansible_os_family == 'RedHat'
 
