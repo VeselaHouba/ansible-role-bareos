@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 Schedule {
   Name = "{{ item.name }}"
-{% if item.full is iterable %}
+{% if item.full is iterable and item.full is not string and item.full is not mapping %}
 {% for line in item.full %}
   Run = {{ line }}
 {% endfor %}
@@ -9,7 +9,7 @@ Schedule {
   Run = {{ item.full }}
 {% endif %}
 {% if item.incr is defined %}
-{% if item.incr is iterable %}
+{% if item.incr is iterable and item.incr is not string and item.incr is not mapping %}
 {% for line in item.incr %}
   Run = {{ line }}
 {% endfor %}
