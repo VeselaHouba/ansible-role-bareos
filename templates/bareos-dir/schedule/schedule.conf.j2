@@ -14,7 +14,7 @@ Schedule {
   Run = {{ line }}
 {% endfor %}
 {% else %}
-  Run = {{ line }}
+  Run = {{ item.incr }}
 {% endif %}
 {% endif %}
 {% if item.enabled is defined %}
