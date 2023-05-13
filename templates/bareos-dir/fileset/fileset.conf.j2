@@ -27,5 +27,10 @@ FileSet {
 {% for file in bareos_excludes %}
     File = {{ file }}
 {% endfor %}
+{% if item.exclude is defined %}
+{% for line in item.exclude_file %}
+    File = {{ line }}
+{% endfor %}
+{% endif %}
   }
 }
